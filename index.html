@@ -1,1 +1,498 @@
+import React, { useState } from 'react';
+import { Play, CheckCircle, AlertCircle, RotateCcw, BookOpen } from 'lucide-react';
 
+export default function WebSeriesExplorer() {
+  const [currentScreen, setCurrentScreen] = useState('intro');
+  const [episodeChoices, setEpisodeChoices] = useState({});
+  const [score, setScore] = useState(0);
+  const [completedSections, setCompletedSections] = useState([]);
+  const [scenarioSet, setScenarioSet] = useState(0);
+
+  const allScenarios = [
+    // Set 1
+    [
+      {
+        id: 'episode1_v1',
+        title: 'Episode 1: The Opening Hook',
+        description: 'Your protagonist discovers a mysterious message on their phone. How do you end this 8-minute episode?',
+        options: [
+          {
+            text: 'Resolve the mystery completely - they find out who sent it and why',
+            correct: false,
+            feedback: 'This resolves too much too quickly. Web series need to keep viewers wanting more while still making each episode satisfying.'
+          },
+          {
+            text: 'End with them about to open a suspicious door, cut to black',
+            correct: true,
+            feedback: 'Perfect! A cliffhanger that makes the episode satisfying but leaves viewers eager for the next installment. This balances resolution with ongoing intrigue.'
+          },
+          {
+            text: 'Introduce five new characters and three subplots',
+            correct: false,
+            feedback: 'Too much for one episode! Web series episodes need focus. You can develop complexity over multiple episodes.'
+          }
+        ]
+      },
+      {
+        id: 'episode3_v1',
+        title: 'Episode 3: Character Development',
+        description: 'You\'re halfway through your 6-episode series. What should this episode prioritize?',
+        options: [
+          {
+            text: 'Move the main plot forward while revealing something important about your protagonist',
+            correct: true,
+            feedback: 'Excellent! Mid-series episodes should deepen character understanding while advancing the story. This creates investment in both plot and people.'
+          },
+          {
+            text: 'Focus entirely on a side character viewers have never met',
+            correct: false,
+            feedback: 'With limited episode count, each one needs to contribute to your core story and established characters. Save deep dives for characters viewers already care about.'
+          },
+          {
+            text: 'Just action sequences with no character moments',
+            correct: false,
+            feedback: 'Web series thrive on character connection. Viewers return for people they care about, not just plot events.'
+          }
+        ]
+      },
+      {
+        id: 'engagement_v1',
+        title: 'Audience Engagement Strategy',
+        description: 'Viewers are commenting with theories about your series. How do you respond?',
+        options: [
+          {
+            text: 'Ignore all comments to avoid spoilers',
+            correct: false,
+            feedback: 'Web series uniquely benefit from audience interaction! This is a missed opportunity to build community and loyalty.'
+          },
+          {
+            text: 'Engage thoughtfully, asking questions and acknowledging theories without confirming or denying',
+            correct: true,
+            feedback: 'Perfect approach! This builds community, shows you value your audience, and keeps the mystery alive. Some creators have even incorporated audience ideas into their stories.'
+          },
+          {
+            text: 'Reveal major plot twists to reward engaged fans',
+            correct: false,
+            feedback: 'While engagement is valuable, giving away plot points removes the viewing experience. Tease and interact without spoiling.'
+          }
+        ]
+      },
+      {
+        id: 'structure_v1',
+        title: 'Series Structure Planning',
+        description: 'You\'re planning a 5-episode web series. How should you structure it?',
+        options: [
+          {
+            text: 'Make each episode a completely standalone story with no connection',
+            correct: false,
+            feedback: 'This misses the key strength of web series - building a larger narrative over time. You want interconnected episodes.'
+          },
+          {
+            text: 'Create an arc where each episode is satisfying individually but contributes to an overall story with character development',
+            correct: true,
+            feedback: 'Exactly right! Each episode should work as a mini-story while building toward something bigger. This is what makes web series unique.'
+          },
+          {
+            text: 'Make every episode end on a cliffhanger with nothing resolved',
+            correct: false,
+            feedback: 'Too frustrating! While cliffhangers help, each episode needs some satisfaction. Balance is key - resolve something while keeping intrigue alive.'
+          }
+        ]
+      }
+    ],
+    // Set 2
+    [
+      {
+        id: 'episode2_v2',
+        title: 'Episode 2: Building Momentum',
+        description: 'Your second episode needs to build on the first. Your protagonist is investigating the mystery. What\'s your approach?',
+        options: [
+          {
+            text: 'Start from scratch with a completely different storyline',
+            correct: false,
+            feedback: 'Web series rely on continuity! Viewers came back to see what happens next. You need to build on previous episodes.'
+          },
+          {
+            text: 'Answer one question from episode 1, but raise two new intriguing questions',
+            correct: true,
+            feedback: 'Brilliant! This gives viewers satisfaction (answering something) while deepening investment (new mysteries). This is the sweet spot for episodic storytelling.'
+          },
+          {
+            text: 'Spend the entire episode recapping what happened in episode 1',
+            correct: false,
+            feedback: 'With only 5-20 minutes, you can\'t waste time on lengthy recaps. A brief reminder is fine, but move the story forward!'
+          }
+        ]
+      },
+      {
+        id: 'pacing_v2',
+        title: 'Pacing Your Episodes',
+        description: 'Your 10-minute episode feels slow. What\'s the best solution?',
+        options: [
+          {
+            text: 'Cut character moments to make room for more action',
+            correct: false,
+            feedback: 'Character moments are what make viewers care! Don\'t sacrifice emotional connection for pace. Find other solutions.'
+          },
+          {
+            text: 'Add more subplots to make it feel busier',
+            correct: false,
+            feedback: 'More isn\'t always better. Adding subplots can make pacing worse. Focus and tighten what you have instead.'
+          },
+          {
+            text: 'Trim exposition and start scenes later, focusing on essential story beats',
+            correct: true,
+            feedback: 'Exactly! Tight writing means starting scenes as late as possible and ending them early. Cut anything that doesn\'t serve character or plot directly.'
+          }
+        ]
+      },
+      {
+        id: 'finale_v2',
+        title: 'The Series Finale',
+        description: 'You\'re writing the final episode of your 6-part series. What\'s your priority?',
+        options: [
+          {
+            text: 'Introduce a shocking new villain for viewers to think about',
+            correct: false,
+            feedback: 'The finale should resolve your current story arc! Introducing new major elements leaves viewers frustrated rather than satisfied.'
+          },
+          {
+            text: 'Resolve main storylines while staying true to the character arcs developed over the series',
+            correct: true,
+            feedback: 'Perfect! Finales need to pay off what you\'ve built. Viewers invested in your story and characters deserve satisfying conclusions to both.'
+          },
+          {
+            text: 'End on a massive cliffhanger with nothing resolved',
+            correct: false,
+            feedback: 'Unless you\'re guaranteed a second season, this is risky! Even with more planned, finales should provide significant resolution.'
+          }
+        ]
+      },
+      {
+        id: 'release_v2',
+        title: 'Release Strategy',
+        description: 'You\'ve finished your 8-episode series. How should you release it?',
+        options: [
+          {
+            text: 'Drop all episodes at once so viewers can binge',
+            correct: false,
+            feedback: 'This works for some formats, but web series traditionally benefit from weekly/regular releases that build community discussion and anticipation between episodes.'
+          },
+          {
+            text: 'Release episodes on a regular schedule (weekly or bi-weekly) to build anticipation and community',
+            correct: true,
+            feedback: 'Great strategy! Regular releases let you build momentum, engage with audience reactions, and keep people talking about your series over time.'
+          },
+          {
+            text: 'Release episodes randomly whenever they\'re ready',
+            correct: false,
+            feedback: 'Inconsistent release schedules lose viewers. People need to know when to expect new content to stay engaged with your series.'
+          }
+        ]
+      }
+    ],
+    // Set 3
+    [
+      {
+        id: 'opening_v3',
+        title: 'Opening Scene Choices',
+        description: 'Episode 1 opens. Your protagonist is a college student who discovers something strange. Where do you start?',
+        options: [
+          {
+            text: 'Five minutes of them waking up, having breakfast, and going through their normal routine',
+            correct: false,
+            feedback: 'Too slow! Web series need to hook viewers immediately. Start with something compelling - the strange discovery - not mundane routines.'
+          },
+          {
+            text: 'Begin with them finding the strange thing, then reveal character through how they react',
+            correct: true,
+            feedback: 'Perfect! Start with the hook, then use that situation to reveal character naturally. This combines immediate intrigue with character development.'
+          },
+          {
+            text: 'A ten-minute flashback to their childhood before showing present day',
+            correct: false,
+            feedback: 'You don\'t have time for this in a web series episode! Establish present-day stakes first, add backstory gradually across episodes if needed.'
+          }
+        ]
+      },
+      {
+        id: 'midseason_v3',
+        title: 'Mid-Season Episode Strategy',
+        description: 'Episode 4 of your 7-episode series. The main plot has stalled. What do you do?',
+        options: [
+          {
+            text: 'Create a "filler" episode with a random side adventure unrelated to the main story',
+            correct: false,
+            feedback: 'Filler episodes frustrate viewers in short series! Every episode is precious. If the plot stalled, you need to restructure, not add irrelevant content.'
+          },
+          {
+            text: 'Use this episode to deepen character relationships while advancing the plot in a new direction',
+            correct: true,
+            feedback: 'Excellent! So-called "slow" episodes can strengthen character bonds and set up major plot developments. Nothing should be filler - everything should matter.'
+          },
+          {
+            text: 'Skip ahead in time and hope viewers don\'t notice the gap',
+            correct: false,
+            feedback: 'Viewers will definitely notice! If you need to skip time, do it purposefully and acknowledge it. Better yet, figure out what story needs to happen in between.'
+          }
+        ]
+      },
+      {
+        id: 'feedback_v3',
+        title: 'Responding to Audience Feedback',
+        description: 'After episode 3, viewers are complaining that your main character is "too unlikeable." What do you do?',
+        options: [
+          {
+            text: 'Completely rewrite the character to please everyone',
+            correct: false,
+            feedback: 'Don\'t abandon your vision entirely! Some characters are meant to be flawed or difficult. Consider if the feedback reveals a real issue with your storytelling.'
+          },
+          {
+            text: 'Ignore all feedback and continue exactly as planned',
+            correct: false,
+            feedback: 'While staying true to your vision matters, audience feedback can reveal blind spots. At least consider why they feel this way.'
+          },
+          {
+            text: 'Evaluate if upcoming episodes already address this, or if you can show more of what makes them sympathetic without changing your core story',
+            correct: true,
+            feedback: 'Smart approach! Sometimes audiences need more context. Maybe your planned character development will help, or you can add small moments that build sympathy without derailing your arc.'
+          }
+        ]
+      },
+      {
+        id: 'budget_v3',
+        title: 'Working Within Constraints',
+        description: 'Your web series budget is limited. How do you approach episode 5\'s big confrontation scene?',
+        options: [
+          {
+            text: 'Write an expensive action sequence anyway and hope you find the money',
+            correct: false,
+            feedback: 'Unrealistic! Good web series work within their means. Write to your budget from the start.'
+          },
+          {
+            text: 'Cut the scene entirely and just mention it happened off-screen',
+            correct: false,
+            feedback: 'Don\'t rob viewers of important moments! Find creative solutions rather than cutting crucial scenes.'
+          },
+          {
+            text: 'Rewrite the confrontation to be more dialogue and performance-driven, using creative camera work and tension',
+            correct: true,
+            feedback: 'Brilliant! Great web series shine through strong writing and performances, not expensive effects. Hitchcock said "the more successful the villain, the more successful the picture" - tension beats budget!'
+          }
+        ]
+      }
+    ]
+  ];
+
+  const keyPrinciples = [
+    {
+      icon: '🎬',
+      title: 'Episode Length',
+      description: 'Typically 5-20 minutes - short enough to maintain focus, long enough to develop story'
+    },
+    {
+      icon: '📖',
+      title: 'Dual Satisfaction',
+      description: 'Each episode must be satisfying on its own AND advance the larger narrative'
+    },
+    {
+      icon: '🎣',
+      title: 'Strategic Cliffhangers',
+      description: 'Use cliffhangers to maintain engagement between episodes, but balance with resolution'
+    },
+    {
+      icon: '👥',
+      title: 'Character Arcs',
+      description: 'Develop characters across multiple episodes rather than resolving everything in one'
+    },
+    {
+      icon: '💬',
+      title: 'Audience Engagement',
+      description: 'Web series allow direct interaction with viewers - use it to build community'
+    },
+    {
+      icon: '🔗',
+      title: 'Interconnected Stories',
+      description: 'Think of it as a series of connected short films that tell a complete story together'
+    }
+  ];
+
+  const scenarios = allScenarios[scenarioSet];
+
+  const handleChoice = (scenarioId, optionIndex) => {
+    const scenario = scenarios.find(s => s.id === scenarioId);
+    const option = scenario.options[optionIndex];
+    
+    setEpisodeChoices({
+      ...episodeChoices,
+      [scenarioId]: { option, optionIndex }
+    });
+
+    if (option.correct && !completedSections.includes(scenarioId)) {
+      setScore(score + 1);
+      setCompletedSections([...completedSections, scenarioId]);
+    }
+  };
+
+  const resetQuiz = () => {
+    setEpisodeChoices({});
+    setScore(0);
+    setCompletedSections([]);
+    // Cycle through scenario sets
+    setScenarioSet((scenarioSet + 1) % allScenarios.length);
+    setCurrentScreen('intro');
+  };
+
+  const renderIntro = () => (
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-lg shadow-lg">
+        <div className="flex items-center gap-3 mb-4">
+          <Play className="w-10 h-10" />
+          <h1 className="text-3xl font-bold">Web Series Structure Explorer</h1>
+        </div>
+        <p className="text-lg opacity-90">
+          Learn how web series combine short film techniques with episodic storytelling through interactive scenarios.
+        </p>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <BookOpen className="w-6 h-6" />
+          Key Principles of Web Series
+        </h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          {keyPrinciples.map((principle, index) => (
+            <div key={index} className="bg-gray-50 p-4 rounded border-l-4 border-blue-500">
+              <div className="text-3xl mb-2">{principle.icon}</div>
+              <h3 className="font-bold text-gray-800 mb-1">{principle.title}</h3>
+              <p className="text-sm text-gray-600">{principle.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        onClick={() => setCurrentScreen('scenarios')}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-lg"
+      >
+        <Play className="w-6 h-6" />
+        Start Interactive Scenarios
+      </button>
+
+      {scenarioSet > 0 && (
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+          <p className="text-sm text-gray-700">
+            <strong>New Challenge Set {scenarioSet + 1}:</strong> Fresh scenarios to test your understanding in different ways!
+          </p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderScenarios = () => (
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Decision Scenarios</h2>
+            {scenarioSet > 0 && (
+              <p className="text-sm text-gray-600 mt-1">Challenge Set {scenarioSet + 1}</p>
+            )}
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-gray-600">Progress</div>
+            <div className="text-2xl font-bold text-blue-600">{score} / {scenarios.length}</div>
+          </div>
+        </div>
+
+        {scenarios.map((scenario) => {
+          const userChoice = episodeChoices[scenario.id];
+          
+          return (
+            <div key={scenario.id} className="mb-8 p-6 bg-gray-50 rounded-lg border-2 border-gray-200">
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{scenario.title}</h3>
+              <p className="text-gray-700 mb-4">{scenario.description}</p>
+              
+              <div className="space-y-3">
+                {scenario.options.map((option, index) => {
+                  const isSelected = userChoice?.optionIndex === index;
+                  const showFeedback = isSelected;
+                  
+                  return (
+                    <div key={index}>
+                      <button
+                        onClick={() => handleChoice(scenario.id, index)}
+                        disabled={userChoice !== undefined}
+                        className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                          isSelected
+                            ? option.correct
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-red-500 bg-red-50'
+                            : userChoice
+                            ? 'border-gray-200 bg-gray-100 opacity-50'
+                            : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          {isSelected && (
+                            option.correct ? (
+                              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                            ) : (
+                              <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
+                            )
+                          )}
+                          <span className={`flex-1 ${userChoice ? 'font-medium' : ''}`}>
+                            {option.text}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {showFeedback && (
+                        <div className={`mt-2 p-4 rounded-lg ${
+                          option.correct ? 'bg-green-100 border-l-4 border-green-500' : 'bg-red-100 border-l-4 border-red-500'
+                        }`}>
+                          <p className="text-sm text-gray-800">{option.feedback}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+
+        {Object.keys(episodeChoices).length === scenarios.length && (
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg">
+            <h3 className="text-2xl font-bold mb-2">Scenarios Complete!</h3>
+            <p className="mb-4">
+              You scored {score} out of {scenarios.length}. {score === scenarios.length 
+                ? 'Perfect! You understand web series structure excellently.' 
+                : 'Review the feedback above to strengthen your understanding.'}
+            </p>
+            <button
+              onClick={resetQuiz}
+              className="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Try New Challenge Set
+            </button>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={() => setCurrentScreen('intro')}
+        className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+      >
+        Back to Key Principles
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+      {currentScreen === 'intro' ? renderIntro() : renderScenarios()}
+    </div>
+  );
+}
