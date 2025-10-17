@@ -1,512 +1,558 @@
-import React, { useState } from 'react';
-import { CheckCircle, XCircle, RefreshCw, BookOpen, Film, Users } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Series Interactive Learning Module</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
 
-const WebSeriesInteractive = () => {
-  const [currentSection, setCurrentSection] = useState('intro');
-  const [quizAnswers, setQuizAnswers] = useState({});
-  const [scenarioChoices, setScenarioChoices] = useState({});
-  const [showResults, setShowResults] = useState(false);
+        const WebSeriesInteractive = () => {
+            const [currentSection, setCurrentSection] = useState('intro');
+            const [quizAnswers, setQuizAnswers] = useState({});
+            const [scenarioChoices, setScenarioChoices] = useState({});
+            const [showResults, setShowResults] = useState(false);
 
-  const sections = [
-    { id: 'intro', name: 'Introduction', icon: BookOpen },
-    { id: 'structure', name: 'Episode Structure', icon: Film },
-    { id: 'engagement', name: 'Audience Engagement', icon: Users },
-    { id: 'quiz', name: 'Check Your Understanding', icon: CheckCircle }
-  ];
+            const sections = [
+                { id: 'intro', name: 'Introduction' },
+                { id: 'structure', name: 'Episode Structure' },
+                { id: 'engagement', name: 'Audience Engagement' },
+                { id: 'quiz', name: 'Check Your Understanding' }
+            ];
 
-  const quizQuestions = [
-    {
-      id: 'q1',
-      question: 'What is the typical length of a web series episode?',
-      options: [
-        { id: 'a', text: '30-60 minutes', correct: false },
-        { id: 'b', text: '5-20 minutes', correct: true },
-        { id: 'c', text: '1-3 minutes', correct: false },
-        { id: 'd', text: '90+ minutes', correct: false }
-      ],
-      explanation: 'Web series episodes typically run 5-20 minutes, balancing concise storytelling with enough time to develop the narrative.'
-    },
-    {
-      id: 'q2',
-      question: 'What makes web series different from a single short film?',
-      options: [
-        { id: 'a', text: 'They are always comedies', correct: false },
-        { id: 'b', text: 'They explore characters and story over multiple episodes', correct: true },
-        { id: 'c', text: 'They must be animated', correct: false },
-        { id: 'd', text: 'They cannot have cliffhangers', correct: false }
-      ],
-      explanation: 'Web series allow deeper exploration of characters and storylines across multiple episodes, unlike the single narrative arc of a short film.'
-    },
-    {
-      id: 'q3',
-      question: 'Why are cliffhangers important in web series?',
-      options: [
-        { id: 'a', text: 'They confuse the audience', correct: false },
-        { id: 'b', text: 'They keep audiences engaged between episodes', correct: true },
-        { id: 'c', text: 'They make episodes shorter', correct: false },
-        { id: 'd', text: 'They are required by law', correct: false }
-      ],
-      explanation: 'Cliffhangers create anticipation and keep audiences coming back for the next episode, maintaining engagement throughout the series.'
-    }
-  ];
+            const quizQuestions = [
+                {
+                    id: 'q1',
+                    question: 'What is the typical length of a web series episode?',
+                    options: [
+                        { id: 'a', text: '30-60 minutes', correct: false },
+                        { id: 'b', text: '5-20 minutes', correct: true },
+                        { id: 'c', text: '1-3 minutes', correct: false },
+                        { id: 'd', text: '90+ minutes', correct: false }
+                    ],
+                    explanation: 'Web series episodes typically run 5-20 minutes, balancing concise storytelling with enough time to develop the narrative.'
+                },
+                {
+                    id: 'q2',
+                    question: 'What makes web series different from a single short film?',
+                    options: [
+                        { id: 'a', text: 'They are always comedies', correct: false },
+                        { id: 'b', text: 'They explore characters and story over multiple episodes', correct: true },
+                        { id: 'c', text: 'They must be animated', correct: false },
+                        { id: 'd', text: 'They cannot have cliffhangers', correct: false }
+                    ],
+                    explanation: 'Web series allow deeper exploration of characters and storylines across multiple episodes, unlike the single narrative arc of a short film.'
+                },
+                {
+                    id: 'q3',
+                    question: 'Why are cliffhangers important in web series?',
+                    options: [
+                        { id: 'a', text: 'They confuse the audience', correct: false },
+                        { id: 'b', text: 'They keep audiences engaged between episodes', correct: true },
+                        { id: 'c', text: 'They make episodes shorter', correct: false },
+                        { id: 'd', text: 'They are required by law', correct: false }
+                    ],
+                    explanation: 'Cliffhangers create anticipation and keep audiences coming back for the next episode, maintaining engagement throughout the series.'
+                }
+            ];
 
-  const scenario = {
-    title: 'Web Series Planning Scenario',
-    situation: 'You are creating a 6-episode mystery web series about students investigating strange events at their school.',
-    decisions: [
-      {
-        id: 'd1',
-        question: 'How should you structure Episode 1?',
-        options: [
-          { 
-            id: 'a', 
-            text: 'Solve the entire mystery in one episode', 
-            feedback: 'Not ideal. This would end your series too quickly and not take advantage of the episodic format.',
-            points: 0
-          },
-          { 
-            id: 'b', 
-            text: 'Introduce characters, establish the mystery, end with a cliffhanger', 
-            feedback: 'Excellent choice! This hooks viewers while setting up the ongoing narrative.',
-            points: 2
-          },
-          { 
-            id: 'c', 
-            text: 'Start in the middle of the action with no setup', 
-            feedback: 'Risky approach. While it creates intrigue, audiences need some grounding in Episode 1.',
-            points: 1
-          }
-        ]
-      },
-      {
-        id: 'd2',
-        question: 'Your audience comments suggest they want more backstory for a side character. What do you do?',
-        options: [
-          { 
-            id: 'a', 
-            text: 'Ignore comments and stick to your original plan', 
-            feedback: 'You might miss an opportunity. Web series benefit from audience engagement and feedback.',
-            points: 0
-          },
-          { 
-            id: 'b', 
-            text: 'Completely rewrite the series around this character', 
-            feedback: 'Too extreme. Stay true to your core story while incorporating feedback thoughtfully.',
-            points: 1
-          },
-          { 
-            id: 'c', 
-            text: 'Add a subplot in future episodes that explores this character', 
-            feedback: 'Perfect balance! You acknowledge audience interest while maintaining your narrative integrity.',
-            points: 2
-          }
-        ]
-      },
-      {
-        id: 'd3',
-        question: 'How should each episode function within the series?',
-        options: [
-          { 
-            id: 'a', 
-            text: 'As standalone stories with no connection', 
-            feedback: 'This misses the point of a web series. Episodes should connect to form a larger narrative.',
-            points: 0
-          },
-          { 
-            id: 'b', 
-            text: 'Satisfying on its own while advancing the overall story', 
-            feedback: 'Exactly right! Each episode should reward viewers while building toward the series conclusion.',
-            points: 2
-          },
-          { 
-            id: 'c', 
-            text: 'As cliffhangers only with no resolution', 
-            feedback: 'Too frustrating for audiences. Balance cliffhangers with satisfying episode content.',
-            points: 1
-          }
-        ]
-      }
-    ]
-  };
+            const scenario = {
+                title: 'Web Series Planning Scenario',
+                situation: 'You are creating a 6-episode mystery web series about students investigating strange events at their school.',
+                decisions: [
+                    {
+                        id: 'd1',
+                        question: 'How should you structure Episode 1?',
+                        options: [
+                            { 
+                                id: 'a', 
+                                text: 'Solve the entire mystery in one episode', 
+                                feedback: 'Not ideal. This would end your series too quickly and not take advantage of the episodic format.',
+                                points: 0
+                            },
+                            { 
+                                id: 'b', 
+                                text: 'Introduce characters, establish the mystery, end with a cliffhanger', 
+                                feedback: 'Excellent choice! This hooks viewers while setting up the ongoing narrative.',
+                                points: 2
+                            },
+                            { 
+                                id: 'c', 
+                                text: 'Start in the middle of the action with no setup', 
+                                feedback: 'Risky approach. While it creates intrigue, audiences need some grounding in Episode 1.',
+                                points: 1
+                            }
+                        ]
+                    },
+                    {
+                        id: 'd2',
+                        question: 'Your audience comments suggest they want more backstory for a side character. What do you do?',
+                        options: [
+                            { 
+                                id: 'a', 
+                                text: 'Ignore comments and stick to your original plan', 
+                                feedback: 'You might miss an opportunity. Web series benefit from audience engagement and feedback.',
+                                points: 0
+                            },
+                            { 
+                                id: 'b', 
+                                text: 'Completely rewrite the series around this character', 
+                                feedback: 'Too extreme. Stay true to your core story while incorporating feedback thoughtfully.',
+                                points: 1
+                            },
+                            { 
+                                id: 'c', 
+                                text: 'Add a subplot in future episodes that explores this character', 
+                                feedback: 'Perfect balance! You acknowledge audience interest while maintaining your narrative integrity.',
+                                points: 2
+                            }
+                        ]
+                    },
+                    {
+                        id: 'd3',
+                        question: 'How should each episode function within the series?',
+                        options: [
+                            { 
+                                id: 'a', 
+                                text: 'As standalone stories with no connection', 
+                                feedback: 'This misses the point of a web series. Episodes should connect to form a larger narrative.',
+                                points: 0
+                            },
+                            { 
+                                id: 'b', 
+                                text: 'Satisfying on its own while advancing the overall story', 
+                                feedback: 'Exactly right! Each episode should reward viewers while building toward the series conclusion.',
+                                points: 2
+                            },
+                            { 
+                                id: 'c', 
+                                text: 'As cliffhangers only with no resolution', 
+                                feedback: 'Too frustrating for audiences. Balance cliffhangers with satisfying episode content.',
+                                points: 1
+                            }
+                        ]
+                    }
+                ]
+            };
 
-  const handleQuizAnswer = (questionId, optionId) => {
-    setQuizAnswers({ ...quizAnswers, [questionId]: optionId });
-  };
+            const handleQuizAnswer = (questionId, optionId) => {
+                setQuizAnswers({ ...quizAnswers, [questionId]: optionId });
+            };
 
-  const handleScenarioChoice = (decisionId, optionId) => {
-    setScenarioChoices({ ...scenarioChoices, [decisionId]: optionId });
-  };
+            const handleScenarioChoice = (decisionId, optionId) => {
+                setScenarioChoices({ ...scenarioChoices, [decisionId]: optionId });
+            };
 
-  const calculateScore = () => {
-    const quizScore = quizQuestions.reduce((score, q) => {
-      const answer = quizAnswers[q.id];
-      const correct = q.options.find(opt => opt.id === answer && opt.correct);
-      return score + (correct ? 1 : 0);
-    }, 0);
+            const calculateScore = () => {
+                const quizScore = quizQuestions.reduce((score, q) => {
+                    const answer = quizAnswers[q.id];
+                    const correct = q.options.find(opt => opt.id === answer && opt.correct);
+                    return score + (correct ? 1 : 0);
+                }, 0);
 
-    const scenarioScore = scenario.decisions.reduce((score, d) => {
-      const choice = scenarioChoices[d.id];
-      const option = d.options.find(opt => opt.id === choice);
-      return score + (option ? option.points : 0);
-    }, 0);
+                const scenarioScore = scenario.decisions.reduce((score, d) => {
+                    const choice = scenarioChoices[d.id];
+                    const option = d.options.find(opt => opt.id === choice);
+                    return score + (option ? option.points : 0);
+                }, 0);
 
-    return { 
-      quiz: quizScore, 
-      quizTotal: quizQuestions.length,
-      scenario: scenarioScore,
-      scenarioTotal: scenario.decisions.length * 2
-    };
-  };
+                return { 
+                    quiz: quizScore, 
+                    quizTotal: quizQuestions.length,
+                    scenario: scenarioScore,
+                    scenarioTotal: scenario.decisions.length * 2
+                };
+            };
 
-  const renderIntro = () => (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-gray-800">Understanding Web Series</h2>
-      <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-        <p className="text-gray-700">
-          Web series are a unique storytelling format that combines the concise nature of short films with the depth of episodic television. This interactive module will help you understand how to create compelling web series content.
-        </p>
-      </div>
-      <div className="grid md:grid-cols-3 gap-4 mt-6">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <Film className="w-8 h-8 text-purple-600 mb-2" />
-          <h3 className="font-semibold text-gray-800 mb-2">Episodic Structure</h3>
-          <p className="text-sm text-gray-600">Learn how to build stories across multiple short episodes</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <BookOpen className="w-8 h-8 text-green-600 mb-2" />
-          <h3 className="font-semibold text-gray-800 mb-2">Character Development</h3>
-          <p className="text-sm text-gray-600">Explore how arcs unfold over time in web series</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <Users className="w-8 h-8 text-orange-600 mb-2" />
-          <h3 className="font-semibold text-gray-800 mb-2">Audience Engagement</h3>
-          <p className="text-sm text-gray-600">Discover the unique creator-viewer relationship</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderStructure = () => (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-gray-800">Episode Structure & Character Arcs</h2>
-      
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="font-semibold text-lg text-gray-800 mb-4">Key Principles</h3>
-        
-        <div className="space-y-4">
-          <div className="border-l-4 border-purple-500 pl-4">
-            <h4 className="font-semibold text-gray-800">Individual Episode Satisfaction</h4>
-            <p className="text-gray-700 text-sm mt-1">
-              Each episode must be satisfying on its own while advancing the overall narrative. Think of it as a complete mini-story within the larger story.
-            </p>
-          </div>
-          
-          <div className="border-l-4 border-green-500 pl-4">
-            <h4 className="font-semibold text-gray-800">Strategic Cliffhangers</h4>
-            <p className="text-gray-700 text-sm mt-1">
-              Use cliffhangers to maintain audience interest between episodes. They create anticipation and ensure viewers return for the next installment.
-            </p>
-          </div>
-          
-          <div className="border-l-4 border-blue-500 pl-4">
-            <h4 className="font-semibold text-gray-800">Extended Character Development</h4>
-            <p className="text-gray-700 text-sm mt-1">
-              Character arcs develop over multiple episodes rather than resolving quickly. This allows for deeper, more nuanced character growth.
-            </p>
-          </div>
-          
-          <div className="border-l-4 border-orange-500 pl-4">
-            <h4 className="font-semibold text-gray-800">Concise Focus</h4>
-            <p className="text-gray-700 text-sm mt-1">
-              Despite the episodic nature, each episode needs to remain concise and focused. You're writing interconnected short films, not traditional TV episodes.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-800 mb-2">💡 Think About It</h4>
-        <p className="text-sm text-gray-700">
-          A web series is like a novel divided into short chapters, where each chapter is exciting enough to stand alone, but together they tell a much richer story.
-        </p>
-      </div>
-    </div>
-  );
-
-  const renderEngagement = () => (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-gray-800">Audience Engagement</h2>
-      
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="font-semibold text-lg text-gray-800 mb-4">The Creator-Viewer Relationship</h3>
-        
-        <p className="text-gray-700 mb-4">
-          Web series create a unique dynamic between storytellers and audiences. Unlike traditional media, viewers can actively participate in the storytelling process.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">What Audiences Can Do</h4>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span>Comment on episodes and share reactions</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span>Develop and share theories about the story</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span>Interact directly with creators</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-blue-600 mr-2">•</span>
-                <span>Influence the direction of the story</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-green-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">Benefits for Creators</h4>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">•</span>
-                <span>Get immediate feedback on storytelling</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">•</span>
-                <span>Build a dedicated community</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">•</span>
-                <span>Understand what resonates with viewers</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">•</span>
-                <span>Adapt stories based on audience interest</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-800 mb-2">🎬 Real World Example</h4>
-        <p className="text-sm text-gray-700">
-          Many successful web series creators host live Q&A sessions, create behind-the-scenes content, and even adjust plot points based on fan theories and feedback, creating a collaborative storytelling experience.
-        </p>
-      </div>
-    </div>
-  );
-
-  const renderQuiz = () => {
-    const scores = showResults ? calculateScore() : null;
-
-    return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">Check Your Understanding</h2>
-        
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold text-lg text-gray-800 mb-4">Knowledge Check</h3>
-          
-          {quizQuestions.map((q, idx) => (
-            <div key={q.id} className="mb-6 pb-6 border-b last:border-b-0">
-              <p className="font-semibold text-gray-800 mb-3">
-                {idx + 1}. {q.question}
-              </p>
-              <div className="space-y-2">
-                {q.options.map(opt => (
-                  <label 
-                    key={opt.id}
-                    className={`flex items-center p-3 rounded border cursor-pointer transition ${
-                      quizAnswers[q.id] === opt.id 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-blue-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name={q.id}
-                      value={opt.id}
-                      checked={quizAnswers[q.id] === opt.id}
-                      onChange={() => handleQuizAnswer(q.id, opt.id)}
-                      className="mr-3"
-                    />
-                    <span className="text-gray-700">{opt.text}</span>
-                    {showResults && quizAnswers[q.id] === opt.id && (
-                      opt.correct ? 
-                        <CheckCircle className="ml-auto w-5 h-5 text-green-600" /> :
-                        <XCircle className="ml-auto w-5 h-5 text-red-600" />
-                    )}
-                  </label>
-                ))}
-              </div>
-              {showResults && quizAnswers[q.id] && (
-                <div className={`mt-3 p-3 rounded text-sm ${
-                  q.options.find(opt => opt.id === quizAnswers[q.id] && opt.correct)
-                    ? 'bg-green-50 text-green-800'
-                    : 'bg-blue-50 text-blue-800'
-                }`}>
-                  {q.explanation}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold text-lg text-gray-800 mb-4">{scenario.title}</h3>
-          <p className="text-gray-700 mb-6 bg-gray-50 p-4 rounded border-l-4 border-purple-500">
-            {scenario.situation}
-          </p>
-
-          {scenario.decisions.map((d, idx) => (
-            <div key={d.id} className="mb-6 pb-6 border-b last:border-b-0">
-              <p className="font-semibold text-gray-800 mb-3">
-                Decision {idx + 1}: {d.question}
-              </p>
-              <div className="space-y-2">
-                {d.options.map(opt => (
-                  <label 
-                    key={opt.id}
-                    className={`flex items-start p-3 rounded border cursor-pointer transition ${
-                      scenarioChoices[d.id] === opt.id 
-                        ? 'border-purple-500 bg-purple-50' 
-                        : 'border-gray-200 hover:border-purple-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name={d.id}
-                      value={opt.id}
-                      checked={scenarioChoices[d.id] === opt.id}
-                      onChange={() => handleScenarioChoice(d.id, opt.id)}
-                      className="mr-3 mt-1"
-                    />
-                    <span className="text-gray-700 flex-1">{opt.text}</span>
-                  </label>
-                ))}
-              </div>
-              {showResults && scenarioChoices[d.id] && (
-                <div className="mt-3 p-3 rounded text-sm bg-purple-50 text-purple-900 border border-purple-200">
-                  <strong>Feedback:</strong> {d.options.find(opt => opt.id === scenarioChoices[d.id])?.feedback}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex gap-4">
-          <button
-            onClick={() => setShowResults(true)}
-            disabled={Object.keys(quizAnswers).length < quizQuestions.length || 
-                     Object.keys(scenarioChoices).length < scenario.decisions.length}
-            className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
-          >
-            {showResults ? 'View Results' : 'Submit Answers'}
-          </button>
-          
-          {showResults && (
-            <button
-              onClick={() => {
-                setQuizAnswers({});
-                setScenarioChoices({});
-                setShowResults(false);
-              }}
-              className="flex items-center gap-2 bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition"
-            >
-              <RefreshCw className="w-5 h-5" />
-              Try Again
-            </button>
-          )}
-        </div>
-
-        {showResults && scores && (
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">Your Results</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white bg-opacity-20 rounded p-4">
-                <p className="text-sm opacity-90 mb-1">Knowledge Check</p>
-                <p className="text-3xl font-bold">
-                  {scores.quiz} / {scores.quizTotal}
-                </p>
-                <p className="text-sm mt-2">
-                  {scores.quiz === scores.quizTotal ? 'Perfect score! 🎉' : 
-                   scores.quiz >= scores.quizTotal * 0.7 ? 'Great job! 👏' : 
-                   'Keep learning! 📚'}
-                </p>
-              </div>
-              <div className="bg-white bg-opacity-20 rounded p-4">
-                <p className="text-sm opacity-90 mb-1">Scenario Planning</p>
-                <p className="text-3xl font-bold">
-                  {scores.scenario} / {scores.scenarioTotal}
-                </p>
-                <p className="text-sm mt-2">
-                  {scores.scenario === scores.scenarioTotal ? 'Excellent decisions! 🎬' : 
-                   scores.scenario >= scores.scenarioTotal * 0.7 ? 'Good thinking! 💡' : 
-                   'Consider the feedback! 🤔'}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderContent = () => {
-    switch (currentSection) {
-      case 'intro': return renderIntro();
-      case 'structure': return renderStructure();
-      case 'engagement': return renderEngagement();
-      case 'quiz': return renderQuiz();
-      default: return renderIntro();
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
-            <h1 className="text-3xl font-bold">Web Series: Interactive Learning Module</h1>
-            <p className="mt-2 opacity-90">Explore the art of episodic storytelling for the web</p>
-          </div>
-
-          <div className="border-b bg-gray-50">
-            <div className="flex overflow-x-auto">
-              {sections.map(section => {
-                const Icon = section.icon;
+            const renderIntro = () => {
                 return (
-                  <button
-                    key={section.id}
-                    onClick={() => setCurrentSection(section.id)}
-                    className={`flex items-center gap-2 px-6 py-4 font-semibold whitespace-nowrap transition ${
-                      currentSection === section.id
-                        ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    {section.name}
-                  </button>
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-800">Understanding Web Series</h2>
+                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <p className="text-gray-700">
+                                Web series are a unique storytelling format that combines the concise nature of short films with the depth of episodic television. This interactive module will help you understand how to create compelling web series content.
+                            </p>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-4 mt-6">
+                            <div className="bg-white p-4 rounded-lg shadow">
+                                <svg className="w-8 h-8 text-purple-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+                                </svg>
+                                <h3 className="font-semibold text-gray-800 mb-2">Episodic Structure</h3>
+                                <p className="text-sm text-gray-600">Learn how to build stories across multiple short episodes</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg shadow">
+                                <svg className="w-8 h-8 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                                <h3 className="font-semibold text-gray-800 mb-2">Character Development</h3>
+                                <p className="text-sm text-gray-600">Explore how arcs unfold over time in web series</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg shadow">
+                                <svg className="w-8 h-8 text-orange-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                                <h3 className="font-semibold text-gray-800 mb-2">Audience Engagement</h3>
+                                <p className="text-sm text-gray-600">Discover the unique creator-viewer relationship</p>
+                            </div>
+                        </div>
+                    </div>
                 );
-              })}
-            </div>
-          </div>
+            };
 
-          <div className="p-6">
-            {renderContent()}
-          </div>
+            const renderStructure = () => {
+                return (
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-800">Episode Structure & Character Arcs</h2>
+                        
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <h3 className="font-semibold text-lg text-gray-800 mb-4">Key Principles</h3>
+                            
+                            <div className="space-y-4">
+                                <div className="border-l-4 border-purple-500 pl-4">
+                                    <h4 className="font-semibold text-gray-800">Individual Episode Satisfaction</h4>
+                                    <p className="text-gray-700 text-sm mt-1">
+                                        Each episode must be satisfying on its own while advancing the overall narrative. Think of it as a complete mini-story within the larger story.
+                                    </p>
+                                </div>
+                                
+                                <div className="border-l-4 border-green-500 pl-4">
+                                    <h4 className="font-semibold text-gray-800">Strategic Cliffhangers</h4>
+                                    <p className="text-gray-700 text-sm mt-1">
+                                        Use cliffhangers to maintain audience interest between episodes. They create anticipation and ensure viewers return for the next installment.
+                                    </p>
+                                </div>
+                                
+                                <div className="border-l-4 border-blue-500 pl-4">
+                                    <h4 className="font-semibold text-gray-800">Extended Character Development</h4>
+                                    <p className="text-gray-700 text-sm mt-1">
+                                        Character arcs develop over multiple episodes rather than resolving quickly. This allows for deeper, more nuanced character growth.
+                                    </p>
+                                </div>
+                                
+                                <div className="border-l-4 border-orange-500 pl-4">
+                                    <h4 className="font-semibold text-gray-800">Concise Focus</h4>
+                                    <p className="text-gray-700 text-sm mt-1">
+                                        Despite the episodic nature, each episode needs to remain concise and focused. You are writing interconnected short films, not traditional TV episodes.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
-          <div className="bg-gray-50 border-t p-4 text-center text-sm text-gray-600">
-            Navigate through each section to build your understanding of web series production
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <h4 className="font-semibold text-gray-800 mb-2">💡 Think About It</h4>
+                            <p className="text-sm text-gray-700">
+                                A web series is like a novel divided into short chapters, where each chapter is exciting enough to stand alone, but together they tell a much richer story.
+                            </p>
+                        </div>
+                    </div>
+                );
+            };
 
-export default WebSeriesInteractive;
+            const renderEngagement = () => {
+                return (
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-800">Audience Engagement</h2>
+                        
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <h3 className="font-semibold text-lg text-gray-800 mb-4">The Creator-Viewer Relationship</h3>
+                            
+                            <p className="text-gray-700 mb-4">
+                                Web series create a unique dynamic between storytellers and audiences. Unlike traditional media, viewers can actively participate in the storytelling process.
+                            </p>
+
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-gray-800 mb-2">What Audiences Can Do</h4>
+                                    <ul className="space-y-2 text-sm text-gray-700">
+                                        <li className="flex items-start">
+                                            <span className="text-blue-600 mr-2">•</span>
+                                            <span>Comment on episodes and share reactions</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <span className="text-blue-600 mr-2">•</span>
+                                            <span>Develop and share theories about the story</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <span className="text-blue-600 mr-2">•</span>
+                                            <span>Interact directly with creators</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <span className="text-blue-600 mr-2">•</span>
+                                            <span>Influence the direction of the story</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-green-50 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-gray-800 mb-2">Benefits for Creators</h4>
+                                    <ul className="space-y-2 text-sm text-gray-700">
+                                        <li className="flex items-start">
+                                            <span className="text-green-600 mr-2">•</span>
+                                            <span>Get immediate feedback on storytelling</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <span className="text-green-600 mr-2">•</span>
+                                            <span>Build a dedicated community</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <span className="text-green-600 mr-2">•</span>
+                                            <span>Understand what resonates with viewers</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <span className="text-green-600 mr-2">•</span>
+                                            <span>Adapt stories based on audience interest</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <h4 className="font-semibold text-gray-800 mb-2">🎬 Real World Example</h4>
+                            <p className="text-sm text-gray-700">
+                                Many successful web series creators host live Q&A sessions, create behind-the-scenes content, and even adjust plot points based on fan theories and feedback, creating a collaborative storytelling experience.
+                            </p>
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderQuiz = () => {
+                const scores = showResults ? calculateScore() : null;
+
+                return (
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-bold text-gray-800">Check Your Understanding</h2>
+                        
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <h3 className="font-semibold text-lg text-gray-800 mb-4">Knowledge Check</h3>
+                            
+                            {quizQuestions.map((q, idx) => {
+                                return (
+                                    <div key={q.id} className="mb-6 pb-6 border-b last:border-b-0">
+                                        <p className="font-semibold text-gray-800 mb-3">
+                                            {idx + 1}. {q.question}
+                                        </p>
+                                        <div className="space-y-2">
+                                            {q.options.map(opt => {
+                                                return (
+                                                    <label 
+                                                        key={opt.id}
+                                                        className={`flex items-center p-3 rounded border cursor-pointer transition ${
+                                                            quizAnswers[q.id] === opt.id 
+                                                                ? 'border-blue-500 bg-blue-50' 
+                                                                : 'border-gray-200 hover:border-blue-300'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name={q.id}
+                                                            value={opt.id}
+                                                            checked={quizAnswers[q.id] === opt.id}
+                                                            onChange={() => handleQuizAnswer(q.id, opt.id)}
+                                                            className="mr-3"
+                                                        />
+                                                        <span className="text-gray-700">{opt.text}</span>
+                                                        {showResults && quizAnswers[q.id] === opt.id && (
+                                                            opt.correct ? 
+                                                                <svg className="ml-auto w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                                                                </svg> :
+                                                                <svg className="ml-auto w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                                                                </svg>
+                                                        )}
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                        {showResults && quizAnswers[q.id] && (
+                                            <div className={`mt-3 p-3 rounded text-sm ${
+                                                q.options.find(opt => opt.id === quizAnswers[q.id] && opt.correct)
+                                                    ? 'bg-green-50 text-green-800'
+                                                    : 'bg-blue-50 text-blue-800'
+                                            }`}>
+                                                {q.explanation}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <h3 className="font-semibold text-lg text-gray-800 mb-4">{scenario.title}</h3>
+                            <p className="text-gray-700 mb-6 bg-gray-50 p-4 rounded border-l-4 border-purple-500">
+                                {scenario.situation}
+                            </p>
+
+                            {scenario.decisions.map((d, idx) => {
+                                return (
+                                    <div key={d.id} className="mb-6 pb-6 border-b last:border-b-0">
+                                        <p className="font-semibold text-gray-800 mb-3">
+                                            Decision {idx + 1}: {d.question}
+                                        </p>
+                                        <div className="space-y-2">
+                                            {d.options.map(opt => {
+                                                return (
+                                                    <label 
+                                                        key={opt.id}
+                                                        className={`flex items-start p-3 rounded border cursor-pointer transition ${
+                                                            scenarioChoices[d.id] === opt.id 
+                                                                ? 'border-purple-500 bg-purple-50' 
+                                                                : 'border-gray-200 hover:border-purple-300'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name={d.id}
+                                                            value={opt.id}
+                                                            checked={scenarioChoices[d.id] === opt.id}
+                                                            onChange={() => handleScenarioChoice(d.id, opt.id)}
+                                                            className="mr-3 mt-1"
+                                                        />
+                                                        <span className="text-gray-700 flex-1">{opt.text}</span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                        {showResults && scenarioChoices[d.id] && (
+                                            <div className="mt-3 p-3 rounded text-sm bg-purple-50 text-purple-900 border border-purple-200">
+                                                <strong>Feedback:</strong> {d.options.find(opt => opt.id === scenarioChoices[d.id]).feedback}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setShowResults(true)}
+                                disabled={Object.keys(quizAnswers).length < quizQuestions.length || 
+                                         Object.keys(scenarioChoices).length < scenario.decisions.length}
+                                className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                            >
+                                {showResults ? 'View Results' : 'Submit Answers'}
+                            </button>
+                            
+                            {showResults && (
+                                <button
+                                    onClick={() => {
+                                        setQuizAnswers({});
+                                        setScenarioChoices({});
+                                        setShowResults(false);
+                                    }}
+                                    className="flex items-center gap-2 bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    Try Again
+                                </button>
+                            )}
+                        </div>
+
+                        {showResults && scores && (
+                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6">
+                                <h3 className="text-xl font-bold mb-4">Your Results</h3>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="bg-white bg-opacity-20 rounded p-4">
+                                        <p className="text-sm opacity-90 mb-1">Knowledge Check</p>
+                                        <p className="text-3xl font-bold">
+                                            {scores.quiz} / {scores.quizTotal}
+                                        </p>
+                                        <p className="text-sm mt-2">
+                                            {scores.quiz === scores.quizTotal ? 'Perfect score! 🎉' : 
+                                             scores.quiz >= scores.quizTotal * 0.7 ? 'Great job! 👏' : 
+                                             'Keep learning! 📚'}
+                                        </p>
+                                    </div>
+                                    <div className="bg-white bg-opacity-20 rounded p-4">
+                                        <p className="text-sm opacity-90 mb-1">Scenario Planning</p>
+                                        <p className="text-3xl font-bold">
+                                            {scores.scenario} / {scores.scenarioTotal}
+                                        </p>
+                                        <p className="text-sm mt-2">
+                                            {scores.scenario === scores.scenarioTotal ? 'Excellent decisions! 🎬' : 
+                                             scores.scenario >= scores.scenarioTotal * 0.7 ? 'Good thinking! 💡' : 
+                                             'Consider the feedback! 🤔'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            };
+
+            const renderContent = () => {
+                switch (currentSection) {
+                    case 'intro': 
+                        return renderIntro();
+                    case 'structure': 
+                        return renderStructure();
+                    case 'engagement': 
+                        return renderEngagement();
+                    case 'quiz': 
+                        return renderQuiz();
+                    default: 
+                        return renderIntro();
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+                                <h1 className="text-3xl font-bold">Web Series: Interactive Learning Module</h1>
+                                <p className="mt-2 opacity-90">Explore the art of episodic storytelling for the web</p>
+                            </div>
+
+                            <div className="border-b bg-gray-50">
+                                <div className="flex overflow-x-auto">
+                                    {sections.map(section => {
+                                        return (
+                                            <button
+                                                key={section.id}
+                                                onClick={() => setCurrentSection(section.id)}
+                                                className={`px-6 py-4 font-semibold whitespace-nowrap transition ${
+                                                    currentSection === section.id
+                                                        ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
+                                                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                                                }`}
+                                            >
+                                                {section.name}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="p-6">
+                                {renderContent()}
+                            </div>
+
+                            <div className="bg-gray-50 border-t p-4 text-center text-sm text-gray-600">
+                                Navigate through each section to build your understanding of web series production
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(React.createElement(WebSeriesInteractive), document.getElementById('root'));
+    </script>
+</body>
+</html>
